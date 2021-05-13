@@ -1,4 +1,4 @@
-pragma solidity ^0.7.3;
+pragma solidity ^0.8.4;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import './CTokenInterface.sol';
@@ -17,7 +17,7 @@ contract MyDeFiProject {
     priceOracle = PriceOracleInterface(_priceOracle);
   }
 
-  function supply(address cTokenAddress, uint underlyingAmount ) public {
+  function supply(address cTokenAddress, uint underlyingAmount) public {
     CTokenInterface cToken = CTokenInterface(cTokenAddress);
     address underlyingAddress = cToken.underlying(); 
     IERC20(underlyingAddress).approve(cTokenAddress, underlyingAmount);
@@ -26,7 +26,43 @@ contract MyDeFiProject {
       result == 0, 
       'cToken#mint() failed. see Compound ErrorReporter.sol for details'
     );
+  
   }
+
+  function testing(address cTokenAddress)external view returns(uint){
+    CTokenInterface cToken = CTokenInterface(cTokenAddress);
+    address underlyingAddress = cToken.underlying(); 
+    // IERC20(underlyingAddress).approve(cTokenAddress, underlyingAmount);
+    return IERC20(underlyingAddress).balanceOf(msg.sender);
+  }
+  
+  function testing2(address cTokenAddress)external view returns(CTokenInterface){
+    CTokenInterface cToken = CTokenInterface(cTokenAddress);
+    // address underlyingAddress = cToken.underlying(); 
+    // IERC20(underlyingAddress).approve(cTokenAddress, underlyingAmount);
+    return cToken;
+  }
+ 
+  function getbalance(address cTokenAddress)external view returns(uint,uint){
+    CTokenInterface cToken = CTokenInterface(cTokenAddress);
+    address underlyingAddress = cToken.underlying(); 
+    // address underlyingAddress = cTokenAddress.underlying(); 
+    return (IERC20(underlyingAddress).balanceOf(msg.sender), IERC20(cTokenAddress).balanceOf(msg.sender));
+  }
+  
+  function getbalanceAddress(address cTokenAddress)external view returns(uint,uint){
+    CTokenInterface cToken = CTokenInterface(cTokenAddress);
+    address underlyingAddress = cToken.underlying(); 
+    // address underlyingAddress = cTokenAddress.underlying(); 
+    return (IERC20(underlyingAddress).balanceOf(address(this)), IERC20(cTokenAddress).balanceOf(address(this)));
+  }
+
+  function getaddress(address cTokenAddress)external view returns(address){
+    CTokenInterface cToken = CTokenInterface(cTokenAddress);
+    address underlyingAddress = cToken.underlying(); 
+    return underlyingAddress;
+  }
+
 
   function redeem(address cTokenAddress, uint cTokenAmount) external {
     CTokenInterface cToken = CTokenInterface(cTokenAddress);
